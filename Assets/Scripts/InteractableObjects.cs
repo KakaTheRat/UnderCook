@@ -54,6 +54,7 @@ public class InteractableObjects : MonoBehaviour
         if(itemType == Type.Pot){
             if(preparingItem != null){return false;}
             GameObject holdingItem = playerController.GetHoldingItem();
+            if(holdingItem == null){return false;}
             IngredientManager ingredientManager = holdingItem.GetComponent<IngredientManager>();
             if(ingredientManager != null && ingredientManager.GetCanBeCook() && !ingredientManager.GetCook()){
                 return true;
@@ -75,6 +76,7 @@ public class InteractableObjects : MonoBehaviour
         else if(itemType == Type.Cut){
             if(preparingItem != null){return false;}
             GameObject holdingItem = playerController.GetHoldingItem();
+            if(holdingItem == null){return false;}
             IngredientManager ingredientManager = holdingItem.GetComponent<IngredientManager>();
             if(ingredientManager != null && ingredientManager.GetCanBeCut() && !ingredientManager.GetCut()){
                 return true;

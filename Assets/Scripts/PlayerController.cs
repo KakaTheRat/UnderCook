@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     private GameObject underWiewItem = null;
     private GameObject holdingItem = null;
 
+    public string deviceType;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -133,7 +135,7 @@ public class PlayerController : MonoBehaviour
         holdingItem = itemToHold;
         holdingItem.transform.SetParent(GameObject.FindGameObjectWithTag("HoldingPlaceHolder").transform);
         holdingItem.transform.localPosition =  new Vector3(-0.0003345405f, 0.002910723f, -0.004211193f);
-        holdingItem.transform.localRotation =  Quaternion.Euler(10.815f,-75.071f, 154.183f);
+        holdingItem.transform.localRotation =  Quaternion.Euler(12.029f,-75.593f, 61.671f);
         holdingItem.transform.localScale = new Vector3(1f, 1f,1f);
         animator.SetBool("Holding", true);
     }
@@ -182,5 +184,16 @@ public class PlayerController : MonoBehaviour
             return;
         }
         animator.SetTrigger("CutEnd");
+    }
+
+    public void GetDeviceType(InputAction.CallbackContext context){
+        if(context.control.device.name == "Mouse" && deviceType != "Keyboard" && context.performed || context.control.device.name != "Mouse" && deviceType != context.control.device.name && context.performed){
+            if(context.control.device.name == "Mouse"){
+                deviceType = "Keyboard";
+            }else{
+                deviceType = context.control.device.name;
+            }
+            Debug.Log(deviceType);
+        }
     }
 }
