@@ -3,15 +3,19 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - PlayerHead
+  - HoldingPlaceHolder
+  - FxTemporaire
+  - CutPlaceHolder
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - PlayerHead
   - Water
   - UI
-  - 
+  - Interactable
   - 
   - 
   - 
