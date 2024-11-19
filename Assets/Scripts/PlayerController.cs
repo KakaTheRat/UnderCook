@@ -1,7 +1,5 @@
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 
 public class PlayerController : MonoBehaviour
 {
@@ -22,26 +20,24 @@ public class PlayerController : MonoBehaviour
 
     private InteractableObjects[] interactableObjects;
     private Animator animator;
-    private GameObject underWiewItem = null;
-    private GameObject holdingItem = null;
+    private GameObject underWiewItem;
+    private GameObject holdingItem;
+    private UIManager uiManager;
 
-    public string deviceType;
-
-    private void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true; // Empèche la rotation du Rigidbody
+        rb.freezeRotation = true;
         animator = GetComponent<Animator>();
         interactableObjects = FindObjectsOfType<InteractableObjects>();
+        uiManager = FindObjectOfType<UIManager>();
     }
 
-    // Fonction pour récupérer l'input de mouvement
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
     }
 
-    // Fonction pour récupérer l'input de la souris/joystick pour la caméra
     public void OnLook(InputAction.CallbackContext context)
     {
         lookInput = context.ReadValue<Vector2>();
@@ -49,47 +45,38 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        
-        HandleCamera();
         HandleHover();
     }
 
-    private void FixedUpdate()
-    {
-        HandleMovement(); // La gestion du mouvement physique se fait dans FixedUpdate
+    void FixedUpdate(){
+        HandleMovement();
+        HandleCamera();
     }
 
-    // Gestion du mouvement du joueur
     private void HandleMovement()
     {
-        // Mouvement basé sur les entrées de déplacement
-        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y).normalized; // Normalize pour éviter des vitesses diagonales plus rapides
-        move = transform.TransformDirection(move); // Convertit l'input en coordonnées mondiales
+        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y).normalized;
+        move = transform.TransformDirection(move);
         Vector3 targetVelocity = move * moveSpeed;
 
-        // Déplace le personnage en utilisant le Rigidbody (ajustement de la vitesse)
         if(!rb.isKinematic){
-            rb.velocity = new Vector3(targetVelocity.x, rb.velocity.y, targetVelocity.z); // Garde la vitesse Y (gravité) intacte
+            rb.velocity = new Vector3(targetVelocity.x, rb.velocity.y, targetVelocity.z);
         }
 
-        // Mise à jour de l'animation en fonction de la vitesse du joueur
         Vector3 horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         float currentSpeed = horizontalVelocity.magnitude;
-        animator.SetFloat("Speed", currentSpeed);   // Modifie le paramètre 'Speed' dans l'Animator
+        animator.SetFloat("Speed", currentSpeed);
     }
 
-    // Gestion de la caméra pour une vue FPS
     private void HandleCamera()
     {
         if(!rb.isKinematic){
-            // Rotation horizontale (yaw) du joueur
             float yaw = lookInput.x * mouseSensitivity;
             transform.Rotate(Vector3.up * yaw);
         }
 
-        // Rotation verticale (pitch) de la caméra
         pitch -= lookInput.y * mouseSensitivity;
-        pitch = Mathf.Clamp(pitch, -80f, 80f); // Limite la vue verticale
+        pitch = Mathf.Clamp(pitch, -80f, 80f);
         playerCamera.transform.localEulerAngles = new Vector3(pitch, 0f, 0f);
     }
 
@@ -99,11 +86,12 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance,interactableLayer))
         {
             Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.green);
-            // Si on touche un objet avec OutlineController, on active l'outline
             InteractableObjects item = hit.collider.GetComponent<InteractableObjects>();
             if (item != null && item.GetCanBeInteracted())
             {
                 item.ActivateOutline(true);
+                uiManager.SetInteractText(item.GetInteractrionText());
+                uiManager.ToggleInteractText(true);
                 if(underWiewItem != hit.collider.gameObject){
                     underWiewItem = hit.collider.gameObject;
                 }
@@ -129,6 +117,7 @@ public class PlayerController : MonoBehaviour
            outline.ActivateOutline(false);
        }
        underWiewItem = null;
+       uiManager.ToggleInteractText(false);
     }
 
     public void HoldItem(GameObject itemToHold){
@@ -184,16 +173,5 @@ public class PlayerController : MonoBehaviour
             return;
         }
         animator.SetTrigger("CutEnd");
-    }
-
-    public void GetDeviceType(InputAction.CallbackContext context){
-        if(context.control.device.name == "Mouse" && deviceType != "Keyboard" && context.performed || context.control.device.name != "Mouse" && deviceType != context.control.device.name && context.performed){
-            if(context.control.device.name == "Mouse"){
-                deviceType = "Keyboard";
-            }else{
-                deviceType = context.control.device.name;
-            }
-            Debug.Log(deviceType);
-        }
     }
 }

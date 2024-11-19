@@ -1,10 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Rendering;
 using UnityEngine;
-using UnityEngine.Rendering;
 using System.Threading.Tasks;
-using System.Threading;
 
 public class InteractableObjects : MonoBehaviour
 {
@@ -16,8 +11,8 @@ public class InteractableObjects : MonoBehaviour
         Cut
     }
     [SerializeField] private string itemName;
-    [SerializeField] private string interactionText;
     [SerializeField] private Type itemType;
+    private string interactionText;
 
     [Header("If Food")]
     [SerializeField] private GameObject itemToClone;
@@ -36,6 +31,7 @@ public class InteractableObjects : MonoBehaviour
         outline.OutlineMode = Outline.Mode.OutlineAll;
         outline.OutlineColor = Color.blue;
         outline.OutlineWidth = 0f;
+        SetInteractText();
     }
 
     public string GetName(){
@@ -158,6 +154,23 @@ public class InteractableObjects : MonoBehaviour
 
     private void ThrowToBin(){
         playerController.DestroyHoldingItem();
+    }
+
+    private void SetInteractText(){
+        switch(itemType){
+            case Type.Food:
+                interactionText = "to take " + itemName;
+                break;
+            case Type.Bin:
+                interactionText = "to use the bin";
+                break;
+            case Type.Cut:
+                interactionText = "to cut your ingredient";
+                break;
+            case Type.Pot:
+                interactionText = "to cook your ingredient";
+                break;
+        }
     }
 
 }

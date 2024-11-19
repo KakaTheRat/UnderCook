@@ -1,12 +1,10 @@
 using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine.Rendering;
 using EzySlice;
 
 public class IngredientManager : MonoBehaviour
 {
     private string ingredientName;
-    private bool canBeCut;
+    private bool canBeCut ;
     private bool canBeCook;
 
     private bool isCook;
@@ -73,7 +71,6 @@ public class IngredientManager : MonoBehaviour
 
     private void ApplyInternalMaterial(GameObject slicedObject)
     {
-        // Assurez-vous que l'objet possède un renderer
         Renderer renderer = slicedObject.GetComponent<Renderer>();
 
         if (renderer != null && renderer.materials.Length > 1)
