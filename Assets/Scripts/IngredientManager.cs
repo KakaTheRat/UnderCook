@@ -18,6 +18,10 @@ public class IngredientManager : MonoBehaviour
         canBeCook = _canBeCook;
     }
 
+    public string GetIngredentName(){
+        return ingredientName;
+    }
+
     public void Cook(){
         isCook = true;
         GameObject smoke = Instantiate(Resources.Load<GameObject>("Prefabs/Smoke/Smoke01"), gameObject.transform);
