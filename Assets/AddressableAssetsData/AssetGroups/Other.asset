@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Other
+  m_EditorClassIdentifier: 
+  m_GroupName: Other
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 53ac0dde49756904f88f0638522c20e6
+  m_SerializeEntries:
+  - m_GUID: 2789b0436ffd0094c94a6a2125fd837a
+    m_Address: Knife
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b89a0b81c18f8548ae1e630445434b9
+    m_Address: Smoke
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f73b069779b6d5478c9ab015c30546d
+    m_Address: Json
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a059269583ef43147904e2c3f03300bc, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0eab1af75dd45e24ba3ead3d1d5d3aaf, type: 2}
+    - {fileID: 11400000, guid: cc18def2d190094409a3f67b32fb2e30, type: 2}

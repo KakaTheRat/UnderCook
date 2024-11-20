@@ -9,7 +9,6 @@ public class IngredientManager : MonoBehaviour
 
     private bool isCook;
     private bool isCut;
-    public Material crossSectionMaterial;
 
 
     public void SetAttributes(string _name, bool _canBeCut, bool _canBeCook){
@@ -22,9 +21,9 @@ public class IngredientManager : MonoBehaviour
         return ingredientName;
     }
 
-    public void Cook(){
+    public void Cook(GameObject smokePrefab){
         isCook = true;
-        GameObject smoke = Instantiate(Resources.Load<GameObject>("Prefabs/Smoke/Smoke01"), gameObject.transform);
+        GameObject smoke = Instantiate(smokePrefab, gameObject.transform);
         smoke.transform.localRotation = Quaternion.Euler(0f,0f,0f);
     }
 

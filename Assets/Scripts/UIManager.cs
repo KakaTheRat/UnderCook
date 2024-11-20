@@ -2,11 +2,14 @@ using UnityEngine.InputSystem;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class UIManager : MonoBehaviour
 {
+
+    [SerializeField] private List<Texture2D> inputTextures;
     private InputDevice currentDevice;
-    private string imgFolder;
+    private Texture2D inputTexture;
     private TMP_Text interactTextMesh;
     private RawImage interactRawImg; 
 
@@ -35,33 +38,26 @@ public class UIManager : MonoBehaviour
         {
             currentDevice = contextDevice;
             UpdateImgFolder();
-            interactRawImg.texture = GetInputImg();
+            interactRawImg.texture = inputTexture;
         }
     }
 
     private void UpdateImgFolder(){
         if(currentDevice is Gamepad){
             if (currentDevice.name.Contains("DualShock")){
-                imgFolder = "DualShock";
+                inputTexture = inputTextures[0];
             }else{
-                imgFolder = "Xbox";
+                inputTexture = inputTextures[1];
             }
-            imgFolder += "/West";
         }
         else{
-            imgFolder = "Keyboard/E";
+            inputTexture = inputTextures[2];
         }
     }
 
     public void ToggleInteractText(bool _toggle){
         interactRawImg.enabled = _toggle;
         interactTextMesh.enabled = _toggle;
-    }
-
-    private Texture2D GetInputImg(){
-        string path = "Controls Icon/" + imgFolder;
-        Texture2D img = Resources.Load<Texture2D>(path);
-        return img;
     }
 
 

@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Recipe
+  m_EditorClassIdentifier: 
+  m_GroupName: Recipe
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 905846ad62acded40b1c4cdd0ab6d56a
+  m_SerializeEntries:
+  - m_GUID: d3868f191c7b23b4395155f7392297ec
+    m_Address: Salmon Roll
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 11d2ec160a364724485bb849224ee3dd
+    m_Address: Salmon Nigiri
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2d03d63eb074c8442b1449c4059a1248
+    m_Address: Onigiri
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e25b46dfff4e2e4e900e2bc924d76ab
+    m_Address: Ebi Nigiri
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e9c6118b5a33244693348339afe01a6
+    m_Address: Roll
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45d9ad2b4196535488c9d64f6169aba3
+    m_Address: Octopus Nigiri
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a059269583ef43147904e2c3f03300bc, type: 2}
+  m_SchemaSet:
+    m_Schemas: []

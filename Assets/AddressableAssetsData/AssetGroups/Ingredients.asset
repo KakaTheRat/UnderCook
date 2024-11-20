@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Ingredients
+  m_EditorClassIdentifier: 
+  m_GroupName: Ingredients
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 974460066afb07c42a629b4959672604
+  m_SerializeEntries:
+  - m_GUID: 58e0b3c8e5629c4499b2356035ead2c6
+    m_Address: Salmon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 823209b3d274a0c4e96276ddf986b2a8
+    m_Address: Nori
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0df595522a6b8534498369ccc5b286ba
+    m_Address: Tentacle
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e70c9e76b809dc4cb6b8b6c8c579bea
+    m_Address: Cucumber
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 09f7a598c25c4c34e811d2aa65a315d0
+    m_Address: Rice
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 87a0ad38b15055841aeccc5c502f05a8
+    m_Address: Ebi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a059269583ef43147904e2c3f03300bc, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: a42efad8d64daaa40b3175e9adf3947d, type: 2}
+    - {fileID: 11400000, guid: 6b3e0c4ee624a2543a5bac855618b3b9, type: 2}

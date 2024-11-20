@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Threading.Tasks;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class InteractableObjects : MonoBehaviour
 {
@@ -13,11 +15,12 @@ public class InteractableObjects : MonoBehaviour
     [SerializeField] private string itemName;
     [SerializeField] private Type itemType;
     private string interactionText;
+    private AddressableLoader loader;
 
     [Header("If Food")]
-    [SerializeField] private GameObject itemToClone;
-    [SerializeField] private bool canBeCut;
-    [SerializeField] private bool canBeCook;
+    private GameObject itemToSpawn;
+    private bool canBeCut;
+    private bool canBeCook;
 
     private GameObject player;
     private PlayerController playerController;
@@ -27,6 +30,8 @@ public class InteractableObjects : MonoBehaviour
     void Awake(){
         player = GameObject.FindWithTag("Player");
         playerController = player.GetComponent<PlayerController>();
+        loader = gameObject.AddComponent<AddressableLoader>();
+        SetLoadedItem();
         outline = gameObject.AddComponent<Outline>();
         outline.OutlineMode = Outline.Mode.OutlineAll;
         outline.OutlineColor = Color.blue;
@@ -108,7 +113,9 @@ public class InteractableObjects : MonoBehaviour
     }
 
     private void GiveItem(){
-        GameObject clone = Instantiate(itemToClone);
+        GameObject clone = Instantiate(itemToSpawn);
+        clone.transform.localScale = transform.localScale; 
+        SetInfos();
         IngredientManager ingredientManager = clone.AddComponent<IngredientManager>();
         ingredientManager.SetAttributes(itemName, canBeCut, canBeCook);
         playerController.HoldItem(clone);
@@ -117,6 +124,7 @@ public class InteractableObjects : MonoBehaviour
     private async void Cook(){
         preparingItem = playerController.GetHoldingItem();
         preparingItem.transform.SetParent(gameObject.transform);
+        Vector3 previousScale = preparingItem.transform.localScale;
         preparingItem.transform.localPosition = new Vector3(0f,0f,0f);
         preparingItem.transform.localScale = new Vector3(0f,0f,0f);
         playerController.ReleaseItem();
@@ -126,14 +134,15 @@ public class InteractableObjects : MonoBehaviour
         await Task.Delay(2000);
         GetComponent<Animator>().SetTrigger("Cook");
         playerController.Static(false);
-        preparingItem.GetComponent<IngredientManager>().Cook();
+        preparingItem.GetComponent<IngredientManager>().Cook(itemToSpawn);
+        preparingItem.transform.localScale = previousScale;
         playerController.HoldItem(preparingItem);
         preparingItem = null;
         Debug.Log("FINITO");
     }
 
     private async void Cut(){
-        GameObject knife = Instantiate(itemToClone, GameObject.FindGameObjectWithTag("HoldingPlaceHolder").transform);
+        GameObject knife = Instantiate(itemToSpawn, GameObject.FindGameObjectWithTag("HoldingPlaceHolder").transform);
         knife.transform.localPosition =  new Vector3(-0.00016f, 0.00039f, -0.00229f);
         knife.transform.localRotation =  Quaternion.Euler(-46.421f, 37.352f, -136.495f);
         knife.transform.localScale = new Vector3(1f, 0.8549f,1f);
@@ -156,7 +165,25 @@ public class InteractableObjects : MonoBehaviour
         playerController.DestroyHoldingItem();
     }
 
-    private void SetInteractText(){
+    private void SetInfos(){
+        Ingredient ingredientInfo = FindObjectOfType<JsonManager>().GetIngredient(itemName);
+        if(ingredientInfo == null){return;}
+        canBeCook = ingredientInfo.canBeCook;
+        canBeCut = ingredientInfo.canBeCut;
+    }
+
+    void SetLoadedItem(){
+        if(itemType == Type.Bin){return;}
+        loader.GetGameObject(itemName, (addressableOject) => {
+            if(addressableOject != null){
+                itemToSpawn = addressableOject;
+                Debug.Log("Loaded Item");
+            }else{Debug.Log("Item Not Load " + itemName);}
+        });
+    }
+
+    public void SetInteractText(){
+        GameObject playerHolding = playerController.GetHoldingItem();
         switch(itemType){
             case Type.Food:
                 interactionText = "to take " + itemName;
@@ -165,10 +192,14 @@ public class InteractableObjects : MonoBehaviour
                 interactionText = "to use the bin";
                 break;
             case Type.Cut:
-                interactionText = "to cut your ingredient";
+            if(playerHolding != null){
+                interactionText = "to cut the " + playerHolding.GetComponent<IngredientManager>().GetIngredentName();
+            }
                 break;
             case Type.Pot:
-                interactionText = "to cook your ingredient";
+            if(playerHolding != null){
+                interactionText = "to cook your " + playerHolding.GetComponent<IngredientManager>().GetIngredentName();
+            }
                 break;
         }
     }

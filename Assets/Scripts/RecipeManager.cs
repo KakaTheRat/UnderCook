@@ -3,26 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-[System.Serializable]
-    public class Ingredient{
-        public string name;
-        public bool cut;
-        public bool cook;
-        public bool inPlate = false;
-    }
-
-    [System.Serializable]
-    public class Recipe{
-        public string name;
-        public List<Ingredient> ingredients;
-    }
-
-    [System.Serializable]
-    public class RecipeList
-    {
-        public List<Recipe> recipes;
-    }
-
 public class RecipeManager : MonoBehaviour
 {
     private Recipe recipe;
@@ -36,13 +16,12 @@ public class RecipeManager : MonoBehaviour
     }
 
     void SelectRandomRecipe(){
-        TextAsset jsonFile = Resources.Load<TextAsset>("JSON/recipes");
-        RecipeList recipeList = JsonUtility.FromJson<RecipeList>(jsonFile.text);
-        recipe = recipeList.recipes[Random.Range(0,recipeList.recipes.Count)];
+        List<Recipe> recipes = FindObjectOfType<JsonManager>().GetRecipes();
+        recipe = recipes[Random.Range(0,recipes.Count)];
     }
 
     bool CanAddThisIngrediant(IngredientManager _igredientManager){
-        foreach(Ingredient ingredient in recipe.ingredients){
+        foreach(IngredientInRecipe ingredient in recipe.ingredients){
             if(ingredient.name == _igredientManager.GetIngredentName() && ingredient.cook == _igredientManager.GetCook() && ingredient.cut == _igredientManager.GetCut()){
                 return true;
             }
@@ -50,28 +29,28 @@ public class RecipeManager : MonoBehaviour
         return false;
     }
 
-    void AddIngrediantToPlate(IngredientManager _igredientManager){
-        if(CanAddThisIngrediant(_igredientManager)){
-           foreach(Ingredient ingredient in recipe.ingredients){
-                if(ingredient.name == _igredientManager.GetIngredentName()){
-                    ingredient.inPlate = true;
-                    ingredientInPlate.Add(_igredientManager.gameObject);
-                }
-           }
-        }
-    }
+    // void AddIngrediantToPlate(IngredientManager _igredientManager){
+    //     if(CanAddThisIngrediant(_igredientManager)){
+    //        foreach(IngredientInRecipe ingredient in recipe.ingredients){
+    //             if(ingredient.name == _igredientManager.GetIngredentName()){
+    //                 ingredient.inPlate = true;
+    //                 ingredientInPlate.Add(_igredientManager.gameObject);
+    //             }
+    //        }
+    //     }
+    // }
 
-    void CheckIfRecipeComplete(){
-        bool complete = true;
-        foreach(Ingredient ingredient in recipe.ingredients){
-            if(!ingredient.inPlate){
-                complete = false;
-            }
-        }
-        if(complete){
-            CreateRecipe();
-        }
-    }
+    // void CheckIfRecipeComplete(){
+    //     bool complete = true;
+    //     foreach(IngredientInRecipe ingredient in recipe.ingredients){
+    //         if(!ingredient.inPlate){
+    //             complete = false;
+    //         }
+    //     }
+    //     if(complete){
+    //         CreateRecipe();
+    //     }
+    // }
 
     void CreateRecipe(){
         // Il faut :

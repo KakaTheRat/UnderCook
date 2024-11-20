@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -95,6 +96,7 @@ public class PlayerController : MonoBehaviour
                 if(underWiewItem != hit.collider.gameObject){
                     underWiewItem = hit.collider.gameObject;
                 }
+                DisableAllOutlines(item);
                 return;
             }
         }
@@ -102,7 +104,6 @@ public class PlayerController : MonoBehaviour
         {
             Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.red);
         }
-        
         DisableAllOutlines();
     }
 
@@ -110,14 +111,18 @@ public class PlayerController : MonoBehaviour
         return holdingItem;
     }
 
-    private void DisableAllOutlines()
+    private void DisableAllOutlines(InteractableObjects Ignored = null)
     {
-       foreach (var outline in interactableObjects)
-       {
-           outline.ActivateOutline(false);
+       foreach (var outinteractableObject in interactableObjects)
+       {    
+            if(Ignored != outinteractableObject){
+                outinteractableObject.ActivateOutline(false);
+            }
        }
-       underWiewItem = null;
-       uiManager.ToggleInteractText(false);
+       if(Ignored == null){
+            underWiewItem = null;
+            uiManager.ToggleInteractText(false);
+       }
     }
 
     public void HoldItem(GameObject itemToHold){
@@ -125,8 +130,12 @@ public class PlayerController : MonoBehaviour
         holdingItem.transform.SetParent(GameObject.FindGameObjectWithTag("HoldingPlaceHolder").transform);
         holdingItem.transform.localPosition =  new Vector3(-0.0003345405f, 0.002910723f, -0.004211193f);
         holdingItem.transform.localRotation =  Quaternion.Euler(12.029f,-75.593f, 61.671f);
-        holdingItem.transform.localScale = new Vector3(1f, 1f,1f);
         animator.SetBool("Holding", true);
+        foreach(InteractableObjects interactableObject in interactableObjects){
+            if(interactableObject.GetItemType() == InteractableObjects.Type.Pot || interactableObject.GetItemType() == InteractableObjects.Type.Cut){
+                interactableObject.SetInteractText();
+            }
+        }
     }
 
     public void OnInteract(InputAction.CallbackContext context){
