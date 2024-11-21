@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Threading.Tasks;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class InteractableObjects : MonoBehaviour
 {
@@ -10,7 +8,8 @@ public class InteractableObjects : MonoBehaviour
         Food,
         Bin,
         Pot,
-        Cut
+        Cut,
+        Plate
     }
     [SerializeField] private string itemName;
     [SerializeField] private Type itemType;
@@ -26,6 +25,8 @@ public class InteractableObjects : MonoBehaviour
     private PlayerController playerController;
     private Outline outline;
     private GameObject preparingItem;
+
+    private RecipeManager recipeManager;
 
     void Awake(){
         player = GameObject.FindWithTag("Player");
@@ -82,6 +83,11 @@ public class InteractableObjects : MonoBehaviour
             if(ingredientManager != null && ingredientManager.GetCanBeCut() && !ingredientManager.GetCut()){
                 return true;
             }else{return false;}
+        }else if(itemType == Type.Plate){
+            GameObject holdingItem = playerController.GetHoldingItem();
+            if(holdingItem == null){return false;}
+            IngredientManager ingredientManager = holdingItem.GetComponent<IngredientManager>();
+            return recipeManager.CanAddThisIngrediant(ingredientManager);
         }
         return false;
     }
@@ -108,6 +114,9 @@ public class InteractableObjects : MonoBehaviour
                 break;
             case Type.Cut:
                 Cut();
+                break;
+            case Type.Plate:
+                AddToPlate();
                 break;
         }
     }
@@ -150,6 +159,9 @@ public class InteractableObjects : MonoBehaviour
         playerController.ReleaseItem();
         preparingItem.transform.SetParent(GameObject.FindGameObjectWithTag("CutPlaceHolder").transform);
         preparingItem.transform.localPosition = new Vector3(0f,0f,0f);
+        if(preparingItem.name.Contains("Cucumber")){
+            preparingItem.transform.localPosition = new Vector3(0f,0.065f,0f); 
+        }
         playerController.Static(true);
         playerController.ToggleCutAnim(true);
         await Task.Delay(2000);
@@ -159,6 +171,11 @@ public class InteractableObjects : MonoBehaviour
         Destroy(knife);
         playerController.HoldItem(preparingItem);
         preparingItem = null;
+    }
+
+    private void AddToPlate(){
+        recipeManager.AddIngrediantToPlate(playerController.GetHoldingItem());
+        playerController.ReleaseItem();
     }
 
     private void ThrowToBin(){
@@ -174,6 +191,7 @@ public class InteractableObjects : MonoBehaviour
 
     void SetLoadedItem(){
         if(itemType == Type.Bin){return;}
+        if(itemType == Type.Plate){recipeManager = GetComponent<RecipeManager>(); return;}
         loader.GetGameObject(itemName, (addressableOject) => {
             if(addressableOject != null){
                 itemToSpawn = addressableOject;
@@ -186,19 +204,26 @@ public class InteractableObjects : MonoBehaviour
         GameObject playerHolding = playerController.GetHoldingItem();
         switch(itemType){
             case Type.Food:
-                interactionText = "to take " + itemName;
+                interactionText = $"take {itemName}" ;
                 break;
             case Type.Bin:
-                interactionText = "to use the bin";
-                break;
+            if(playerHolding != null){
+                interactionText = $"throw the {playerHolding.GetComponent<IngredientManager>().GetIngredientName()}";
+            }
+            break;
             case Type.Cut:
             if(playerHolding != null){
-                interactionText = "to cut the " + playerHolding.GetComponent<IngredientManager>().GetIngredentName();
+                interactionText = $"cut the {playerHolding.GetComponent<IngredientManager>().GetIngredientName()}";
             }
                 break;
             case Type.Pot:
             if(playerHolding != null){
-                interactionText = "to cook your " + playerHolding.GetComponent<IngredientManager>().GetIngredentName();
+                interactionText = $"cook your {playerHolding.GetComponent<IngredientManager>().GetIngredientName()}";
+            }
+                break;
+            case Type.Plate:
+            if(playerHolding != null){
+                interactionText = $"put the {playerHolding.GetComponent<IngredientManager>().GetIngredientName()} on the plate";
             }
                 break;
         }

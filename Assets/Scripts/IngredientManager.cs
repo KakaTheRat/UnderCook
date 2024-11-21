@@ -17,7 +17,7 @@ public class IngredientManager : MonoBehaviour
         canBeCook = _canBeCook;
     }
 
-    public string GetIngredentName(){
+    public string GetIngredientName(){
         return ingredientName;
     }
 

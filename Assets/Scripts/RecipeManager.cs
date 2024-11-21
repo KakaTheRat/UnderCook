@@ -1,62 +1,116 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class RecipeManager : MonoBehaviour
 {
+    [SerializeField] private Canvas canvas;
+    UIManager uIManager;
     private Recipe recipe;
-    List<GameObject> ingredientInPlate;
+    List<GameObject> ingredientInPlate = new List<GameObject>();
+    AddressableLoader loader;
+    GameObject recipeGameObject;
+    ParticleSystem pouf;
+    JsonManager jsonManager;
+    RabbitManager rabbitManager;
 
-    // Start is called before the first frame update
-    void Awake()
-    {
-        SelectRandomRecipe();
-        Debug.Log(recipe.name);
+    void Awake(){
+        loader = gameObject.AddComponent<AddressableLoader>();
+        uIManager = canvas.GetComponent<UIManager>();
     }
 
-    void SelectRandomRecipe(){
-        List<Recipe> recipes = FindObjectOfType<JsonManager>().GetRecipes();
+    public void SelectRandomRecipe(){
+        if(jsonManager == null){
+            jsonManager = FindObjectOfType<JsonManager>();
+        }
+        List<Recipe> recipes = jsonManager.GetRecipes();
         recipe = recipes[Random.Range(0,recipes.Count)];
+        SetRecipeGameObjectAndPouf();
+        uIManager.SetRecipe(recipe);
     }
 
-    bool CanAddThisIngrediant(IngredientManager _igredientManager){
+    public bool CanAddThisIngrediant(IngredientManager _igredientManager){
         foreach(IngredientInRecipe ingredient in recipe.ingredients){
-            if(ingredient.name == _igredientManager.GetIngredentName() && ingredient.cook == _igredientManager.GetCook() && ingredient.cut == _igredientManager.GetCut()){
+            if(ingredient.name == _igredientManager.GetIngredientName() && ingredient.cook == _igredientManager.GetCook() && ingredient.cut == _igredientManager.GetCut()){
                 return true;
             }
         }
         return false;
     }
 
-    // void AddIngrediantToPlate(IngredientManager _igredientManager){
-    //     if(CanAddThisIngrediant(_igredientManager)){
-    //        foreach(IngredientInRecipe ingredient in recipe.ingredients){
-    //             if(ingredient.name == _igredientManager.GetIngredentName()){
-    //                 ingredient.inPlate = true;
-    //                 ingredientInPlate.Add(_igredientManager.gameObject);
-    //             }
-    //        }
-    //     }
-    // }
+    public void AddIngrediantToPlate(GameObject _igredientToAdd){
+        IngredientManager ingredientManager = _igredientToAdd.GetComponent<IngredientManager>();
+        if(CanAddThisIngrediant(ingredientManager)){
+           foreach(IngredientInRecipe ingredient in recipe.ingredients){
+                if(ingredient.name == ingredientManager.GetIngredientName()){
+                    ingredientInPlate.Add(ingredientManager.gameObject);
+                    _igredientToAdd.transform.SetParent(gameObject.transform);
+                    _igredientToAdd.transform.localPosition = new Vector3(0f,0f,0.00048f);
+                    if(ingredientManager.GetIngredientName() == "Cucumber" || ingredientManager.GetIngredientName() == "Tentacle"){
+                        _igredientToAdd.transform.localPosition = new Vector3(0f,0f,0.00208f);
+                    }
+                    if(ingredientManager.GetIngredientName() == "Nori"){
+                        _igredientToAdd.transform.localPosition = new Vector3(0f,0f,0.00161f);
+                    }
+                    uIManager.ClearIngredient(ingredientManager.GetIngredientName());
+                    CheckIfRecipeComplete();
+                }
+           }
+        }
+    }
 
-    // void CheckIfRecipeComplete(){
-    //     bool complete = true;
-    //     foreach(IngredientInRecipe ingredient in recipe.ingredients){
-    //         if(!ingredient.inPlate){
-    //             complete = false;
-    //         }
-    //     }
-    //     if(complete){
-    //         CreateRecipe();
-    //     }
-    // }
+    void CheckIfRecipeComplete(){
+        if(ingredientInPlate.Count == recipe.ingredients.Count){
+            CreateRecipe();
+        }
+    }
+
+    void SetRecipeGameObjectAndPouf(){
+        loader.GetGameObject(recipe.name, (addressableOject) => {
+            if(addressableOject != null){
+                recipeGameObject = addressableOject;
+                Debug.Log("Loaded Item");
+            }else{Debug.Log("Item Not Load " + recipe.name);}
+        });
+        loader.GetGameObject("Pouf", (addressableOject) => {
+            if(addressableOject != null){
+                GameObject poufGO = Instantiate(addressableOject,gameObject.transform);
+                poufGO.transform.localScale = new Vector3(0.28405f,0.28405f,0.28405f);
+                poufGO.transform.localPosition = new Vector3(0f,0f,0.00332f);
+                pouf = poufGO.GetComponent<ParticleSystem>();
+                Debug.Log("Loaded Item");
+            }else{Debug.Log("Item Not Load " + recipe.name);}
+        });
+    }
 
     void CreateRecipe(){
-        // Il faut :
-        //  - Destroy tout les GameObject dans la plate
-        //  - Appeller un vfx qui fait "POUF"
-        //  - Faire spawn le bon plat (Il va surement falloir que je déplasse tous les ingrédients et plats que j'utilise dans le dossier ressource mais il faut demander a Morgan si c'est ok de faire ça)
-        //  - Renvoyer le lapin et en appeller un nouveau (Mais j'ai pas encore de systeme de client)
+        foreach(GameObject ingredient in ingredientInPlate){
+                Destroy(ingredient);
+        }
+        pouf.Play();
+        recipeGameObject = Instantiate(recipeGameObject, gameObject.transform);
+        recipeGameObject.transform.localScale = new Vector3(1f,1f,1f);
+        if(recipeGameObject.name == "Food_Roll(Clone)"){
+            recipeGameObject.transform.localRotation =  Quaternion.Euler(-90f,0f,0f);
+            recipeGameObject.transform.localPosition = new Vector3(0f,-0.00208f,0.00048f);
+        } else if(recipeGameObject.name == "Food_SalmonRoll(Clone)"){
+            recipeGameObject.transform.localPosition = new Vector3(0f,0f,0.00246f);
+            recipeGameObject.transform.localRotation =  Quaternion.Euler(0f,0f,0f);
+        }else{
+            recipeGameObject.transform.localPosition = new Vector3(0f,0f,0.00048f);
+            recipeGameObject.transform.localRotation =  Quaternion.Euler(0f,0f,0f);
+        }
+        Clear();
+    }
+
+    async void Clear(){
+        recipe = null;
+        if(rabbitManager == null){
+            rabbitManager = FindObjectOfType<RabbitManager>();
+        }
+        rabbitManager.Renvoyer();
+        await Task.Delay(1500);
+        pouf.Play();
+        Destroy(recipeGameObject);
     }
 }

@@ -2,7 +2,6 @@ using UnityEngine.AddressableAssets;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.Rendering;
 
 [System.Serializable]
     public class Ingredient{

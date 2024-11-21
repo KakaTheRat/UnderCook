@@ -48,12 +48,12 @@
       ]
     }
   ],
-  "ingredients" : [
-        {"name" : "Rice", "canBeCut" : false, "canBeCook" : true},
-        {"name" : "Cucumber", "canBeCut" : true, "canBeCook" : false},
-        {"name" : "Ebi", "canBeCut" : true, "canBeCook" : false},
-        {"name" : "Nori", "canBeCut" : false, "canBeCook" : false},
-        {"name" : "Salmon", "canBeCut" : true, "canBeCook" : false},
-        {"name" : "Tentacle", "canBeCut" : true, "canBeCook" : false}
-    ]
+  "ingredients": [
+    { "name": "Rice", "canBeCut": false, "canBeCook": true },
+    { "name": "Cucumber", "canBeCut": true, "canBeCook": false },
+    { "name": "Ebi", "canBeCut": true, "canBeCook": false },
+    { "name": "Nori", "canBeCut": true, "canBeCook": false },
+    { "name": "Salmon", "canBeCut": true, "canBeCook": false },
+    { "name": "Tentacle", "canBeCut": true, "canBeCook": false }
+  ]
 }

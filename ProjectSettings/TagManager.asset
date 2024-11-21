@@ -8,15 +8,17 @@ TagManager:
   - HoldingPlaceHolder
   - FxTemporaire
   - CutPlaceHolder
+  - Rabbit
+  - RabbitSpawn
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - PlayerHead
+  - 
   - Water
   - UI
   - Interactable
-  - 
+  - Player
   - 
   - 
   - 

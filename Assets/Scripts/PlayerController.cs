@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -24,9 +23,12 @@ public class PlayerController : MonoBehaviour
     private GameObject underWiewItem;
     private GameObject holdingItem;
     private UIManager uiManager;
+    private bool controller = false;
 
     void Awake()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         animator = GetComponent<Animator>();
@@ -41,6 +43,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnLook(InputAction.CallbackContext context)
     {
+        controller = context.control.device is Gamepad;
         lookInput = context.ReadValue<Vector2>();
     }
 
@@ -71,15 +74,19 @@ public class PlayerController : MonoBehaviour
 
     private void HandleCamera()
     {
+        float multipy = 1f;
+        if(controller){multipy = 1.5f;}
         if(!rb.isKinematic){
-            float yaw = lookInput.x * mouseSensitivity;
+            float yaw = lookInput.x * mouseSensitivity * multipy;
             transform.Rotate(Vector3.up * yaw);
         }
 
-        pitch -= lookInput.y * mouseSensitivity;
+        pitch -= lookInput.y * mouseSensitivity * multipy;
         pitch = Mathf.Clamp(pitch, -80f, 80f);
         playerCamera.transform.localEulerAngles = new Vector3(pitch, 0f, 0f);
     }
+
+
 
     private void HandleHover()
     {
@@ -128,13 +135,16 @@ public class PlayerController : MonoBehaviour
     public void HoldItem(GameObject itemToHold){
         holdingItem = itemToHold;
         holdingItem.transform.SetParent(GameObject.FindGameObjectWithTag("HoldingPlaceHolder").transform);
-        holdingItem.transform.localPosition =  new Vector3(-0.0003345405f, 0.002910723f, -0.004211193f);
-        holdingItem.transform.localRotation =  Quaternion.Euler(12.029f,-75.593f, 61.671f);
+        string itemName = holdingItem.GetComponent<IngredientManager>().GetIngredientName();
+        holdingItem.transform.localPosition =  new Vector3(-0.00384f, 0.00214f, -0.00331f);
+        if(itemName == "Cucumber" || itemName == "Nori" || itemName == "Tentacle"){
+            holdingItem.transform.localRotation =  Quaternion.Euler(12.029f,-75.593f, 157.392f);
+        }else{
+            holdingItem.transform.localRotation =  Quaternion.Euler(12.029f,-75.593f, 61.671f);
+        }
         animator.SetBool("Holding", true);
         foreach(InteractableObjects interactableObject in interactableObjects){
-            if(interactableObject.GetItemType() == InteractableObjects.Type.Pot || interactableObject.GetItemType() == InteractableObjects.Type.Cut){
-                interactableObject.SetInteractText();
-            }
+            interactableObject.SetInteractText();
         }
     }
 

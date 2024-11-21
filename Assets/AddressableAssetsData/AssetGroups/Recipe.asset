@@ -47,7 +47,58 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 638c8ca438a11c54987de876e500ed02
+    m_Address: Pouf
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2789b0436ffd0094c94a6a2125fd837a
+    m_Address: Knife
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b89a0b81c18f8548ae1e630445434b9
+    m_Address: Smoke
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f73b069779b6d5478c9ab015c30546d
+    m_Address: Json
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58e0b3c8e5629c4499b2356035ead2c6
+    m_Address: Salmon
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 823209b3d274a0c4e96276ddf986b2a8
+    m_Address: Nori
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0df595522a6b8534498369ccc5b286ba
+    m_Address: Tentacle
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e70c9e76b809dc4cb6b8b6c8c579bea
+    m_Address: Cucumber
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 09f7a598c25c4c34e811d2aa65a315d0
+    m_Address: Rice
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 87a0ad38b15055841aeccc5c502f05a8
+    m_Address: Ebi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a059269583ef43147904e2c3f03300bc, type: 2}
   m_SchemaSet:
-    m_Schemas: []
+    m_Schemas:
+    - {fileID: 11400000, guid: 318df80db7a744847b5ee37293368ef8, type: 2}
