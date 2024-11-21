@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using System;
+using System.Collections;
 
 public class RecipeManager : MonoBehaviour
 {
@@ -24,12 +26,13 @@ public class RecipeManager : MonoBehaviour
             jsonManager = FindObjectOfType<JsonManager>();
         }
         List<Recipe> recipes = jsonManager.GetRecipes();
-        recipe = recipes[Random.Range(0,recipes.Count)];
+        recipe = recipes[UnityEngine.Random.Range(0,recipes.Count)];
         SetRecipeGameObjectAndPouf();
         uIManager.SetRecipe(recipe);
     }
 
     public bool CanAddThisIngrediant(IngredientManager _igredientManager){
+        if(recipe == null){return false;}
         foreach(IngredientInRecipe ingredient in recipe.ingredients){
             if(ingredient.name == _igredientManager.GetIngredientName() && ingredient.cook == _igredientManager.GetCook() && ingredient.cut == _igredientManager.GetCut()){
                 return true;
@@ -87,6 +90,7 @@ public class RecipeManager : MonoBehaviour
         foreach(GameObject ingredient in ingredientInPlate){
                 Destroy(ingredient);
         }
+        pouf.gameObject.GetComponent<AudioSource>().Play();
         pouf.Play();
         recipeGameObject = Instantiate(recipeGameObject, gameObject.transform);
         recipeGameObject.transform.localScale = new Vector3(1f,1f,1f);
@@ -103,14 +107,26 @@ public class RecipeManager : MonoBehaviour
         Clear();
     }
 
-    async void Clear(){
+    void Clear(){
         recipe = null;
         if(rabbitManager == null){
             rabbitManager = FindObjectOfType<RabbitManager>();
         }
+        ingredientInPlate.Clear();
         rabbitManager.Renvoyer();
-        await Task.Delay(1500);
+        StartCoroutine(Coroutine_WaitThenLog(1.5f,EndClear));
+
+    }
+
+    void EndClear(){
+        pouf.gameObject.GetComponent<AudioSource>().Play();
         pouf.Play();
         Destroy(recipeGameObject);
+    }
+
+    IEnumerator Coroutine_WaitThenLog(float _duration, Action _callback)
+    {
+        yield return new WaitForSeconds(_duration);
+        _callback?.Invoke();
     }
 }

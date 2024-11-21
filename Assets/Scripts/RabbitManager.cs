@@ -2,6 +2,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using System;
+using System.Collections;
+
 
 public class RabbitManager : MonoBehaviour
 {
@@ -9,12 +12,15 @@ public class RabbitManager : MonoBehaviour
     [SerializeField] List<GameObject> rabbits;
     [SerializeField] GameObject rabbitsSpawner;
     [SerializeField] GameObject rabbitsPlace;
+    [SerializeField] AudioClip successSound;
+    [SerializeField] AudioClip orderSound;
     Animator animator;
     GameObject currentRabbit = null;
     NavMeshAgent navMesh;
     bool finish = false;
     bool arrived = false;
     RecipeManager recipeManager;
+    AudioSource audioSource;
     
     
 
@@ -61,10 +67,13 @@ public class RabbitManager : MonoBehaviour
         newRabbit.transform.position = rabbitsSpawner.transform.position;
         navMesh = currentRabbit.GetComponent<NavMeshAgent>();
         animator = currentRabbit.GetComponent<Animator>();
+        audioSource = currentRabbit.GetComponent<AudioSource>();
         SetDesination(rabbitsPlace);
     }
 
     void MakeOrder(){
+        audioSource.clip = orderSound;
+        audioSource.Play();
         animator.SetTrigger("Hello");
         if(recipeManager == null){
             recipeManager = FindObjectOfType<RecipeManager>();
@@ -72,11 +81,22 @@ public class RabbitManager : MonoBehaviour
         recipeManager.SelectRandomRecipe();
     }
 
-    public async void Renvoyer(){
+    public void Renvoyer(){
+        audioSource.clip = successSound;
+        audioSource.Play();
         animator.SetTrigger("Hello");
-        await Task.Delay(1500);
+        StartCoroutine(Coroutine_WaitThenLog(1.5f,EndRenvoyer));
+    }
+
+    void EndRenvoyer(){
         SetDesination(rabbitsSpawner);
         arrived = false;
         finish = true;
+    }
+
+    IEnumerator Coroutine_WaitThenLog(float _duration, Action _callback)
+    {
+        yield return new WaitForSeconds(_duration);
+        _callback?.Invoke();
     }
 }

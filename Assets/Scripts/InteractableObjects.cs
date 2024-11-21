@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Threading.Tasks;
+using System.Collections;
+using System;
 
 public class InteractableObjects : MonoBehaviour
 {
@@ -25,8 +26,10 @@ public class InteractableObjects : MonoBehaviour
     private PlayerController playerController;
     private Outline outline;
     private GameObject preparingItem;
+    private IngredientManager preparingItemManager;
 
     private RecipeManager recipeManager;
+
 
     void Awake(){
         player = GameObject.FindWithTag("Player");
@@ -126,35 +129,41 @@ public class InteractableObjects : MonoBehaviour
         clone.transform.localScale = transform.localScale; 
         SetInfos();
         IngredientManager ingredientManager = clone.AddComponent<IngredientManager>();
-        ingredientManager.SetAttributes(itemName, canBeCut, canBeCook);
+        ingredientManager.SetAttributes(itemName, canBeCut, canBeCook);        
+        AudioSource audio = GetComponent<AudioSource>();
+        audio.Play();
         playerController.HoldItem(clone);
     }
 
-    private async void Cook(){
+    private void Cook(){
         preparingItem = playerController.GetHoldingItem();
         preparingItem.transform.SetParent(gameObject.transform);
-        Vector3 previousScale = preparingItem.transform.localScale;
-        preparingItem.transform.localPosition = new Vector3(0f,0f,0f);
-        preparingItem.transform.localScale = new Vector3(0f,0f,0f);
+        preparingItem.SetActive(false);
         playerController.ReleaseItem();
         GetComponent<Animator>().SetTrigger("Cook");
+        AudioSource audio = GetComponent<AudioSource>();
+        audio.Play();
         playerController.Static(true);
         outline.OutlineWidth = 0f;
-        await Task.Delay(2000);
+        StartCoroutine(Coroutine_WaitThenLog(2f, EndCook));
+    }
+
+    void EndCook(){
+        preparingItem.SetActive(true);
         GetComponent<Animator>().SetTrigger("Cook");
         playerController.Static(false);
         preparingItem.GetComponent<IngredientManager>().Cook(itemToSpawn);
-        preparingItem.transform.localScale = previousScale;
+        preparingItem.SetActive(true);
         playerController.HoldItem(preparingItem);
         preparingItem = null;
         Debug.Log("FINITO");
     }
 
-    private async void Cut(){
-        GameObject knife = Instantiate(itemToSpawn, GameObject.FindGameObjectWithTag("HoldingPlaceHolder").transform);
-        knife.transform.localPosition =  new Vector3(-0.00016f, 0.00039f, -0.00229f);
-        knife.transform.localRotation =  Quaternion.Euler(-46.421f, 37.352f, -136.495f);
-        knife.transform.localScale = new Vector3(1f, 0.8549f,1f);
+    private void Cut(){
+        itemToSpawn = Instantiate(itemToSpawn, GameObject.FindGameObjectWithTag("HoldingPlaceHolder").transform);
+        itemToSpawn.transform.localPosition =  new Vector3(-0.00016f, 0.00039f, -0.00229f);
+        itemToSpawn.transform.localRotation =  Quaternion.Euler(-46.421f, 37.352f, -136.495f);
+        itemToSpawn.transform.localScale = new Vector3(1f, 0.8549f,1f);
         preparingItem = playerController.GetHoldingItem();
         playerController.ReleaseItem();
         preparingItem.transform.SetParent(GameObject.FindGameObjectWithTag("CutPlaceHolder").transform);
@@ -164,17 +173,33 @@ public class InteractableObjects : MonoBehaviour
         }
         playerController.Static(true);
         playerController.ToggleCutAnim(true);
-        await Task.Delay(2000);
+        AudioSource audio = GetComponent<AudioSource>();
+        audio.Play();
+        StartCoroutine(Coroutine_WaitThenLog(2f, EndCut));
+    }
+
+    private void EndCut()
+    {
+        AudioSource audio = GetComponent<AudioSource>();
+        audio.Stop();
         preparingItem.GetComponent<IngredientManager>().Cut();
         playerController.ToggleCutAnim(false);
         playerController.Static(false);
-        Destroy(knife);
+        Destroy(itemToSpawn);
         playerController.HoldItem(preparingItem);
         preparingItem = null;
     }
 
+    IEnumerator Coroutine_WaitThenLog(float _duration, Action _callback)
+    {
+        yield return new WaitForSeconds(_duration);
+        _callback?.Invoke();
+    }
+
     private void AddToPlate(){
         recipeManager.AddIngrediantToPlate(playerController.GetHoldingItem());
+        AudioSource audio = GetComponent<AudioSource>();
+        audio.Play();
         playerController.ReleaseItem();
     }
 

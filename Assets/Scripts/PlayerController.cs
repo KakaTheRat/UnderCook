@@ -47,14 +47,10 @@ public class PlayerController : MonoBehaviour
         lookInput = context.ReadValue<Vector2>();
     }
 
-    private void Update()
-    {
-        HandleHover();
-    }
-
     void FixedUpdate(){
         HandleMovement();
         HandleCamera();
+        HandleHover();
     }
 
     private void HandleMovement()
@@ -74,8 +70,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandleCamera()
     {
-        float multipy = 1f;
-        if(controller){multipy = 1.5f;}
+        float multipy = 0.2f;
+        if(controller){multipy = 2f;Debug.Log("Controller");}
         if(!rb.isKinematic){
             float yaw = lookInput.x * mouseSensitivity * multipy;
             transform.Rotate(Vector3.up * yaw);

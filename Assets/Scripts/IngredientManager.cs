@@ -1,5 +1,6 @@
 using UnityEngine;
 using EzySlice;
+using UnityEngine.Rendering;
 
 public class IngredientManager : MonoBehaviour
 {
@@ -9,7 +10,11 @@ public class IngredientManager : MonoBehaviour
 
     private bool isCook;
     private bool isCut;
+    AddressableLoader loader;
 
+    void Awake(){
+        loader = gameObject.AddComponent<AddressableLoader>();
+    }
 
     public void SetAttributes(string _name, bool _canBeCut, bool _canBeCook){
         ingredientName = _name;
@@ -50,15 +55,13 @@ public class IngredientManager : MonoBehaviour
 
     public void Slice() 
     {
-	    SlicedHull slicedHull = gameObject.Slice(transform.position, new Vector3(0, 0, 1));
+        SlicedHull slicedHull;
+	    slicedHull = gameObject.Slice(gameObject.transform.position, new Vector3(0, 0, 1));
         if(slicedHull != null){
-
             GameObject slicedObject1 = slicedHull.CreateUpperHull(gameObject);
             GameObject slicedObject2 = slicedHull.CreateLowerHull(gameObject);
-
             ApplyInternalMaterial(slicedObject1);
             ApplyInternalMaterial(slicedObject2);
-
             if(slicedObject1 != null && slicedObject2 != null){
                 Destroy(GetComponent<MeshRenderer>());
                 Destroy(GetComponent<MeshFilter>());
@@ -73,14 +76,13 @@ public class IngredientManager : MonoBehaviour
     }
 
     private void ApplyInternalMaterial(GameObject slicedObject)
-    {
-        Renderer renderer = slicedObject.GetComponent<Renderer>();
-
-        if (renderer != null && renderer.materials.Length > 1)
-        {
-            Material blackMaterial = new Material(Shader.Find("Standard"));
-            blackMaterial.color = Color.black;
-            renderer.materials[1] = blackMaterial;
-        }
+    {           
+                Renderer renderer = slicedObject.GetComponent<Renderer>();
+                if (renderer != null && renderer.materials.Length > 1)
+                    {
+                        Material blackMaterial = new Material(renderer.materials[0]);
+                        blackMaterial.color = Color.black;
+                        renderer.materials[1] = blackMaterial;
+                    }
     }
 }
