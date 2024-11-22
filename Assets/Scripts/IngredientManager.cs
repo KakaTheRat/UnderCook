@@ -1,6 +1,8 @@
 using UnityEngine;
 using EzySlice;
 using UnityEngine.Rendering;
+using System.Collections.Generic;
+using System.Linq;
 
 public class IngredientManager : MonoBehaviour
 {
@@ -10,16 +12,19 @@ public class IngredientManager : MonoBehaviour
 
     private bool isCook;
     private bool isCut;
+    private Material mat;
     AddressableLoader loader;
 
     void Awake(){
         loader = gameObject.AddComponent<AddressableLoader>();
     }
 
-    public void SetAttributes(string _name, bool _canBeCut, bool _canBeCook){
+    public void SetAttributes(string _name, bool _canBeCut, bool _canBeCook, Material _mat){
         ingredientName = _name;
         canBeCut = _canBeCut;
         canBeCook = _canBeCook;
+        mat = _mat;
+        Debug.Log($"lol2 {_mat.name}");
     }
 
     public string GetIngredientName(){
@@ -77,12 +82,18 @@ public class IngredientManager : MonoBehaviour
 
     private void ApplyInternalMaterial(GameObject slicedObject)
     {           
-                Renderer renderer = slicedObject.GetComponent<Renderer>();
-                if (renderer != null && renderer.materials.Length > 1)
-                    {
-                        Material blackMaterial = new Material(renderer.materials[0]);
-                        blackMaterial.color = Color.black;
-                        renderer.materials[1] = blackMaterial;
-                    }
+        Debug.Log($"lol3  {mat.name}");
+        MeshRenderer renderer = slicedObject.GetComponent<MeshRenderer>();
+        if (renderer != null && renderer.materials.Length > 1)
+            {
+                Debug.Log("Coucou");
+                List<Material> mats = renderer.materials.ToList();
+                mats[1] = mat;
+                renderer.SetMaterials(mats);
+            }
+        foreach(Material material in renderer.materials)
+        {
+            Debug.Log(material.name);
+        }
     }
 }

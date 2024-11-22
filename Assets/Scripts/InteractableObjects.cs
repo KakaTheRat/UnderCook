@@ -10,10 +10,12 @@ public class InteractableObjects : MonoBehaviour
         Bin,
         Pot,
         Cut,
-        Plate
+        Plate,
+        Mirror
     }
     [SerializeField] private string itemName;
     [SerializeField] private Type itemType;
+    [SerializeField] private Material mat;
     private string interactionText;
     private AddressableLoader loader;
 
@@ -91,6 +93,8 @@ public class InteractableObjects : MonoBehaviour
             if(holdingItem == null){return false;}
             IngredientManager ingredientManager = holdingItem.GetComponent<IngredientManager>();
             return recipeManager.CanAddThisIngrediant(ingredientManager);
+        }else if(itemType == Type.Mirror){
+            return true;
         }
         return false;
     }
@@ -121,6 +125,9 @@ public class InteractableObjects : MonoBehaviour
             case Type.Plate:
                 AddToPlate();
                 break;
+            case Type.Mirror:
+                Emote();
+                break;
         }
     }
 
@@ -129,7 +136,8 @@ public class InteractableObjects : MonoBehaviour
         clone.transform.localScale = transform.localScale; 
         SetInfos();
         IngredientManager ingredientManager = clone.AddComponent<IngredientManager>();
-        ingredientManager.SetAttributes(itemName, canBeCut, canBeCook);        
+        ingredientManager.SetAttributes(itemName, canBeCut, canBeCook,mat);
+        Debug.Log($"lol{mat.name}");   
         AudioSource audio = GetComponent<AudioSource>();
         audio.Play();
         playerController.HoldItem(clone);
@@ -186,6 +194,7 @@ public class InteractableObjects : MonoBehaviour
         playerController.ToggleCutAnim(false);
         playerController.Static(false);
         Destroy(itemToSpawn);
+        SetLoadedItem();
         playerController.HoldItem(preparingItem);
         preparingItem = null;
     }
@@ -215,7 +224,7 @@ public class InteractableObjects : MonoBehaviour
     }
 
     void SetLoadedItem(){
-        if(itemType == Type.Bin){return;}
+        if(itemType == Type.Bin || itemType == Type.Mirror){return;}
         if(itemType == Type.Plate){recipeManager = GetComponent<RecipeManager>(); return;}
         loader.GetGameObject(itemName, (addressableOject) => {
             if(addressableOject != null){
@@ -230,6 +239,9 @@ public class InteractableObjects : MonoBehaviour
         switch(itemType){
             case Type.Food:
                 interactionText = $"take {itemName}" ;
+                break;
+            case Type.Mirror:
+                interactionText = "Emote" ;
                 break;
             case Type.Bin:
             if(playerHolding != null){
@@ -252,6 +264,10 @@ public class InteractableObjects : MonoBehaviour
             }
                 break;
         }
+    }
+
+    void Emote(){
+        playerController.Emote();
     }
 
 }

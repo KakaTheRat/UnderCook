@@ -189,4 +189,9 @@ public class PlayerController : MonoBehaviour
         }
         animator.SetTrigger("CutEnd");
     }
+
+    public void Emote(){
+        string[] triggerNames = {"Hello", "Chockbar"};
+        animator.SetTrigger(triggerNames[Random.Range(0,triggerNames.Length)]);
+    }
 }
